@@ -7,6 +7,14 @@ public class Photo {
   // to add - raw data later
 
 
+  public Photo() {
+  }
+
+  public Photo(String id, String fileName) {
+    this.id = id;
+    this.fileName = fileName;
+  }
+
   public String getId() {
     return id;
   }
