@@ -1,6 +1,5 @@
 package com.test.aziz.photos.clone;
 
-import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,56 +11,45 @@ import java.util.*;
 @RestController
 public class PhotosController {
 
-  private Map<String, Photo> db = new HashMap<>() {{
-    put("1", new Photo("1", "hello.jpg"));
-  }};
+  private final PhotosService photosService;
 
-//  private List<Photo> db = List.of(new Photo("1", "hello.jpg"));
+  // constructor injection
+  public PhotosController(PhotosService photosService) {
+    this.photosService = photosService;
+  }
+
 
   // mapping it, browser will send HTTP GET request to our server
   // path is "/"
   // there are post, delete mapping as well
   @GetMapping("/")
-  public String hello(){
+  public String hello() {
     return "Hello world";
   }
 
   @GetMapping("/photos")
-  public Collection<Photo> get(){
-    // type List -> Collection
-//    return db;
-    return db.values();
+  public Collection<Photo> get() {
+    return photosService.get();
   }
 
   // @PathVariable - in the mapping if param {id} - put the id in the string param
   @GetMapping("/photos/{id}")
-  public Photo get(@PathVariable String id){
+  public Photo get(@PathVariable String id) {
 //    return db;
-    Photo photo = db.get(id);
+    Photo photo = photosService.get(id);
     if (photo == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     return photo;
   }
 
   @DeleteMapping("/photos/{id}")
-  public void delete(@PathVariable String id){
-    Photo photo = db.remove(id);
+  public void delete(@PathVariable String id) {
+    Photo photo = photosService.remove(id);
     if (photo == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND);
   }
 
   @PostMapping("/photos")
-  public Photo create (@RequestPart("data") MultipartFile file) throws IOException {
-    Photo photo = new Photo();
-    photo.setId(UUID.randomUUID().toString());
-    photo.setFileName(file.getOriginalFilename());
-    photo.setData(file.getBytes());
+  public Photo create(@RequestPart("data") MultipartFile file) throws IOException {
 
-    db.put(photo.getId(), photo);
-    return photo;
+    return photosService.save(file.getOriginalFilename(), file.getBytes());
   }
-
-//  public Photo create (@RequestBody @Valid Photo photo){
-//    photo.setId(UUID.randomUUID().toString());
-//    db.put(photo.getId(), photo);
-//    return photo;
-//  }
 }
