@@ -1,5 +1,7 @@
-package com.test.aziz.photos.clone;
+package com.test.aziz.photos.clone.web;
 
+import com.test.aziz.photos.clone.model.Photo;
+import com.test.aziz.photos.clone.service.PhotosService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -50,6 +52,6 @@ public class PhotosController {
   @PostMapping("/photos")
   public Photo create(@RequestPart("data") MultipartFile file) throws IOException {
 
-    return photosService.save(file.getOriginalFilename(), file.getBytes());
+    return photosService.save(file.getOriginalFilename(), file.getContentType(), file.getBytes());
   }
 }
